@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Version space algo (incomplete).
+
+author: vikash.madhow@gatech.edu
+"""
 
 class Concept:
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 ID3 algo for building decision trees.
 
@@ -7,6 +9,10 @@ from math import log2
 
 
 class Attribute:
+    """
+    The definition of a nominal attribute (such as humidity, rain, etc.). A nominal
+    attribute is restricted to a list of values.
+   """
     def __init__(self, name, *values):
         self.name = name
         self.values = set(values)
@@ -20,6 +26,10 @@ class Attribute:
 
 
 class Dataset:
+    """
+    A dataset is a list of tuples, all of which conforms to a structure defined on construction
+    of the dataset. The structure consist of an ordered-list of attributes (the fields of the dataset).
+    """
     def __init__(self, attributes, classification_attribute, rows=None):
         self.attributes = attributes
         self.attribute_by_name = {attr.name:index for index, attr in attributes.items()}
@@ -37,13 +47,16 @@ class Dataset:
             self.add(*rows)
 
     def add(self, *rows):
+        """
+        Add one or more rows to the dataset.
+        :param rows: The rows to add.
+        """
         # type-check and increment counts for each value
         value_counts = {index:{value:0 for value in attr.values} for index, attr in self.attributes.items()}
         rows_by_attr_value = {index:{value:[] for value in attr.values} for index, attr in self.attributes.items()}
 
         for row in rows:
             for attr_index, attr in self.attributes.items():
-                # attr = self.attributes[attr_index]
                 attr_value = row[attr_index]
                 attr.type_check(attr_value)
                 value_counts[attr_index][attr_value] += 1
@@ -70,6 +83,7 @@ class Dataset:
         return len(self.rows)
 
     def entropy(self):
+        """Computes the entropy of the dataset."""
         ent = 0.0
         for value in self.class_attr.values:
             if len(self.rows) != 0:
@@ -79,6 +93,7 @@ class Dataset:
         return ent
 
     def information_gain(self, attribute):
+        """Computes the information gain for the dataset with respect to the specified attribute."""
         if len(self.rows) == 0:
             return 0
 
@@ -102,6 +117,11 @@ class Dataset:
         return selected
 
     def decision_tree(self):
+        """
+        Computes the decision tree for this dataset.
+        :return: The decision tree.
+        """
+
         # if all examples has the same classification value, return that value as the target node value
         number_of_rows = len(self.rows)
         for value in self.attributes[self.class_attr_index].values:
@@ -141,22 +161,33 @@ class Dataset:
             return Decision(attribute, value_to_node)
 
     def classify(self, row):
+        """Classifies a row based on the trained decision tree (not implemented yet)."""
         pass
 
 
 class Node:
-    pass
+    """A node in the decision tree."""
+    def __repr__(self):
+        return str(self)
 
 
 class Decision(Node):
+    """A branch in the decision tree."""
     def __init__(self, attribute, value_to_node):
         self.attribute = attribute
         self.value_to_node = value_to_node
 
+    def __str__(self):
+        return str(self.attribute) + ":" + str(self.value_to_node)
+
 
 class Leaf(Node):
+    """A leaf in the decision tree."""
     def __init__(self, value):
         self.value = value
+
+    def __str__(self):
+        return str(self.value)
 
 
 def main():
@@ -193,6 +224,7 @@ def main():
     print(dataset.information_gain(temperature))
 
     tree = dataset.decision_tree()
+    print()
     print(tree)
 
 if __name__ == "__main__":
