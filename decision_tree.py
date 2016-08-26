@@ -3,7 +3,7 @@
 """
 ID3 algo for building decision trees.
 
-@author: vikash.madhow@gatech.edu
+author: vikash.madhow@gatech.edu
 """
 from math import log2
 
